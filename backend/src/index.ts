@@ -12,6 +12,20 @@ const app = new Hono<{
 	}
 }>();
 
+app.use('/api/v1/blog/*' , async (c,next)=>{
+  const token = c.req.header('Authorization') || "";
+  const value = token.split(" ")[1]
+  if(!value){return c.res.json({message:"Token is missing"},401)}
+  const response = await verify(value, c.env.SECRET_KEY)
+
+  if(response.id){
+      next();
+  }
+  else{
+    return c.res.json({message:"Unauthorized"},403)
+  }
+})
+
 
 app.post('/api/v1/signup', async(c) => {
  const prisma = new PrismaClient({
