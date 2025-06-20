@@ -7,7 +7,13 @@
 generator client {
   provider = "prisma-client-js"
   output   = "./generated/client"
- 
+}
+
+generator edge {
+  provider = "prisma-client-js"
+  output   = "./generated/edge"
+  engineType = "library"
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
@@ -22,11 +28,13 @@ model User {
   password String
   posts    Post[]
 }
+
 model Post {
   id       String   @id @default(uuid())
   title    String
   content  String
+  thumbnail String?
   publish  Boolean @default(false)
-  author   User    @relation(fields: [id], references: [id])
+  author   User    @relation(fields: [authorId], references: [id])
   authorId String
 }

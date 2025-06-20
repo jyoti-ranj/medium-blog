@@ -134,13 +134,13 @@ exports.Prisma.ModelName = {
  */
 const config = {
   "generator": {
-    "name": "client",
+    "name": "edge",
     "provider": {
       "fromEnvVar": null,
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "D:\\100X Devs\\Projects\\class-13.1\\medium-blog\\backend\\prisma\\generated\\client",
+      "value": "D:\\100X Devs\\Projects\\class-13.1\\medium-blog\\backend\\prisma\\generated\\edge",
       "fromEnvVar": null
     },
     "config": {
@@ -153,7 +153,9 @@ const config = {
         "native": true
       }
     ],
-    "previewFeatures": [],
+    "previewFeatures": [
+      "driverAdapters"
+    ],
     "sourceFilePath": "D:\\100X Devs\\Projects\\class-13.1\\medium-blog\\backend\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
@@ -187,8 +189,8 @@ const fs = require('fs')
 config.dirname = __dirname
 if (!fs.existsSync(path.join(__dirname, 'schema.prisma'))) {
   const alternativePaths = [
-    "prisma/generated/client",
-    "generated/client",
+    "prisma/generated/edge",
+    "generated/edge",
   ]
   
   const alternativePath = alternativePaths.find((altPath) => {
