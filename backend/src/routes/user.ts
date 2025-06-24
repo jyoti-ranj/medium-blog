@@ -3,6 +3,8 @@ import { PrismaClient } from '../generated/prisma/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
 import { jwt, sign } from 'hono/jwt'
 import bcrypt from 'bcryptjs'
+import { SignupInput , SigninInput} from "@jyoti_ranj/common";
+
 export const userRouter = new Hono<{
   Bindings:{
     DATABASE_URL:string,
@@ -13,6 +15,10 @@ export const userRouter = new Hono<{
 //signup
 userRouter.post('/signup', async(c) => {
   const body = await c.req.json()
+  const {success} = SignupInput.safeParse(body);
+  if(!success){
+    return c.json({message: 'Invalid request body'},400)
+  }
   const prisma = new PrismaClient({
     datasourceUrl: c.env.DATABASE_URL,
 }).$extends(withAccelerate())
@@ -35,6 +41,10 @@ const token = await sign({ id: (await user).id }, c.env.JWT_SECRET);
 //signin
 userRouter.post('/api/v1/user/signin', async(c) => {
   const body = await c.req.json()
+  const {success} = SigninInput.safeParse(body);
+  if(!success){
+    return c.json({message: 'Invalid request body'},400)
+  }
   const prisma = new PrismaClient({
     datasourceUrl: c.env.DATABASE_URL,
 }).$extends(withAccelerate())
