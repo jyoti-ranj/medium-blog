@@ -1,0 +1,20 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;500;600;700&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --font-poppins: "Poppins", sans-serif;
+--font-montserrat: "Montserrat", sans-serif;
+--font-outfit: "Outfit", sans-serif;
+--font-nunito: "Nunito", sans-serif;
+--font-raleway: "Raleway", sans-serif;
+--font-lato: "Lato", sans-serif;
+--font-open: "Open Sans", sans-serif;
+--font-roboto: "Roboto", sans-serif;
+--font-source: "Source Sans Pro", sans-serif;
+--font-work: "Work Sans", sans-serif;
+--font-dm: "DM Sans", sans-serif;
+--font-plus: "Plus Jakarta Sans", sans-serif;
+--font-manrope: "Manrope", sans-serif;
+--font-lexend: "Lexend", sans-serif;
+--font-quicksand: "Quicksand", sans-serif;
+}
