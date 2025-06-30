@@ -36,27 +36,31 @@ blogRouter.use("/*",async(c , next)=>{
 })
 
 blogRouter.post('/', async(c) => {
-const body = await c.req.json();
-const authorId = c.get("userId");
-const {success} = createBlogInput.safeParse(body);
-  if(!success){
-    return c.json({message: 'Invalid request body'},400)
-  }
-const prisma = new PrismaClient({
-datasourceUrl: c.env.DATABASE_URL,
-}).$extends(withAccelerate())
-
-const blog = await prisma.blog.create({
-    data: {
-        title: body.title,
-        content: body.content,
-        authorId:Number(authorId)
+  const body = await c.req.json();
+    const { success } = createBlogInput.safeParse(body);
+    if (!success) {
+        c.status(411);
+        return c.json({
+            message: "Inputs not correct"
+        })
     }
-})
 
-  return c.json({
-    message: "Post created successfully" , id:blog.id
-  })
+    const authorId = c.get("userId");
+    const prisma = new PrismaClient({
+      datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate())
+
+    const blog = await prisma.blog.create({
+        data: {
+            title: body.title,
+            content: body.content,
+            authorId: Number(authorId)
+        }
+    })
+
+    return c.json({
+        id: blog.id
+    })
 
 })
 
@@ -64,28 +68,32 @@ const blog = await prisma.blog.create({
 
 
 blogRouter.put('/', async(c) => {
-const body = await c.req.json();
-const {success} = updateBlogInput.safeParse(body);
-  if(!success){
-    return c.json({message: 'Invalid request body'},400)
-  }
-const prisma = new PrismaClient({
-datasourceUrl: c.env.DATABASE_URL,
-}).$extends(withAccelerate())
-
-const blog = await prisma.blog.update({
-    where: {
-        id: body.id
-    },
-    data: {
-        title: body.title,
-        content: body.content,
+ const body = await c.req.json();
+    const { success } = updateBlogInput.safeParse(body);
+    if (!success) {
+        c.status(411);
+        return c.json({
+            message: "Inputs not correct"
+        })
     }
-})
 
-  return c.json({
-    message: "Post updated successfully" , id:blog.id
-  })
+    const prisma = new PrismaClient({
+      datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate())
+
+    const blog = await prisma.blog.update({
+        where: {
+            id: body.id
+        }, 
+        data: {
+            title: body.title,
+            content: body.content
+        }
+    })
+
+    return c.json({
+        id: blog.id
+    })
 })
 
 
@@ -96,7 +104,7 @@ datasourceUrl: c.env.DATABASE_URL,
 }).$extends(withAccelerate())
 
 
-const blog = await prisma.blog.findMany({
+const blogs = await prisma.blog.findMany({
         select: {
             content: true,
             title: true,
@@ -109,34 +117,43 @@ const blog = await prisma.blog.findMany({
         }
     });
 
-  return c.json({
-    message: "Below are the posts" , blog
-  },200)
-})
-
-
-blogRouter.get('/:id', async(c) => {
- const id = await c.req.param("id");
-const prisma = new PrismaClient({
-datasourceUrl: c.env.DATABASE_URL,
-}).$extends(withAccelerate())
-
-try{const blog = await prisma.blog.findFirst({
-   where: {
-    id:Number(id)
-   },
-})
-
-  return c.json({
-    message: "Below are the posts" , blog
-  })
-}catch(error){
     return c.json({
-        message: "No posts found"
-    },411)
-}
-
-
+        blogs
+    })
 })
 
+
+blogRouter.get('/:id', async (c) => {
+    const id = c.req.param("id");
+    const prisma = new PrismaClient({
+      datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate())
+
+    try {
+        const blog = await prisma.blog.findFirst({
+            where: {
+                id: Number(id)
+            },
+            select: {
+                id: true,
+                title: true,
+                content: true,
+                author: {
+                    select: {
+                        name: true
+                    }
+                }
+            }
+        })
+    
+        return c.json({
+            blog
+        });
+    } catch(e) {
+        c.status(411); // 4
+        return c.json({
+            message: "Error while fetching blog post"
+        });
+    }
+})
 
