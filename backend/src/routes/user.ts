@@ -24,14 +24,14 @@ userRouter.post('/signup', async(c) => {
 }).$extends(withAccelerate())
 
 const hashedPassword = await bcrypt.hash(body.password , 10)
-const user = prisma.user.create({
+const user = await prisma.user.create({
   data: {
     name:body.name,
     userName:body.username,
     password:hashedPassword
   }
 })
-const token = await sign({ id: (await user).id }, c.env.JWT_SECRET);
+const token = await sign({ id: user.id }, c.env.JWT_SECRET);
 
   return c.json({
     message: 'User created successfully', token
@@ -39,7 +39,7 @@ const token = await sign({ id: (await user).id }, c.env.JWT_SECRET);
 })
 
 //signin
-userRouter.post('/api/v1/user/signin', async(c) => {
+userRouter.post('/signin', async(c) => {
   const body = await c.req.json()
   const {success} = SigninInput.safeParse(body);
   if(!success){
